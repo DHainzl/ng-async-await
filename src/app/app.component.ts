@@ -18,21 +18,16 @@ export class AppComponent {
         private pokemonApiService: PokemonApiService,
     ) { }
 
-    loadData() {
+    async loadData() {
         this.error = '';
         this.pokemon = undefined;
         this.encounters = undefined;
 
-        this.pokemonApiService.getPokemon(this.pokemonName)
-            .then(data => {
-                this.pokemon = data;
-                return this.pokemonApiService.getEncounters(this.pokemon.id);
-            })
-            .then(encounters => {
-                this.encounters = encounters;
-            })
-            .catch(error => {
-                this.error = `Could not fetch pokemon: ${error.status}`;
-            });
+        try {
+            this.pokemon = await this.pokemonApiService.getPokemon(this.pokemonName);
+            this.encounters = await this.pokemonApiService.getEncounters(this.pokemon.id);
+        } catch (error) {
+            this.error = `Could not fetch pokemon: ${error.status}`;
+        }
     }
 }
